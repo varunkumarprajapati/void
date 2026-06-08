@@ -1,9 +1,13 @@
 import pool from "./db.js";
 import fs from "node:fs/promises";
 import path from "node:path";
-// 1. Get the absolute path to your migrations folder
-// Assuming your folder structure is: src/config/migrations/
-const MIGRATIONS_DIR = path.join(process.cwd(), "src", "config", "migrations");
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// This looks for "migrations" right next to wherever migrate.js/ts is running
+const MIGRATIONS_DIR = path.join(__dirname, "migrations");
 
 async function runMigrations() {
   try {
