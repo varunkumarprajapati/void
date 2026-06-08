@@ -62,8 +62,10 @@ async function runMigrations() {
     console.log("⭐ All migrations processed.");
   } catch (error) {
     console.error("Migration error:", error);
-  } finally {
     process.exit(1);
+  } finally {
+    await pool.end();
+    console.log("🛑 Migration database pool connection closed.");
   }
 }
 

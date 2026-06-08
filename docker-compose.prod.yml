@@ -20,4 +20,4 @@ services:
       redis:
         condition: service_started
 
-    command: sh -c "npm run migration:run && npm start"
+    command: npm run prod
