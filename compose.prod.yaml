@@ -1,0 +1,22 @@
+volumes:
+  redis_data:
+services:
+  redis:
+    image: valkey/valkey:8.0-alpine
+    restart: always
+    ports:
+      - "6379"
+    volumes:
+      - redis_data:/data
+
+  backend:
+    image: ghcr.io/varunkumarprajapati/void-backend:latest
+    ports:
+      - ${PORT}:${PORT}
+    env_file:
+      - .env
+    restart: always
+    depends_on:
+      redis:
+
+    command: sh -c "npm run migration:run && npm start"
