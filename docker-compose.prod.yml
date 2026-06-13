@@ -1,23 +1,27 @@
 volumes:
   redis_data:
+
+networks:
+  gateway-shared-mesh:
+    external: true
+    name: gateway-shared-mesh
 services:
   redis:
     image: valkey/valkey:8.0-alpine
     restart: always
-    ports:
-      - "6379"
     volumes:
       - redis_data:/data
+    networks:
+      - gateway-shared-mesh
 
   backend:
     image: ghcr.io/varunkumarprajapati/void-backend:latest
-    ports:
-      - ${PORT}:${PORT}
     env_file:
       - .env
     restart: always
     depends_on:
       redis:
         condition: service_started
-
     command: npm run prod
+    networks:
+      - gateway-shared-mesh

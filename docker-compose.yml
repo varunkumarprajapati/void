@@ -1,17 +1,23 @@
 volumes:
   mysql_data:
   redis_data:
+
+networks:
+  gateway-shared-mesh:
+    external: true
+    name: gateway-shared-mesh
+
 services:
   mysql:
     image: mysql:8.4
+    networks:
+      - gateway-shared-mesh
     restart: always
     ports:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
@@ -22,6 +28,8 @@ services:
 
   redis:
     image: valkey/valkey:8.0-alpine
+    networks:
+      - gateway-shared-mesh
     restart: always
     ports:
       - "6379:6379"
@@ -36,7 +44,10 @@ services:
   backend:
     build:
       context: .
-      target: production
+      target: development
+    container_name: auth_service
+    networks:
+      - gateway-shared-mesh
     ports:
       - ${PORT}:${PORT}
     env_file:
