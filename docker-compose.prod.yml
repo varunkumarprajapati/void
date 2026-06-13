@@ -16,6 +16,7 @@ services:
 
   backend:
     image: ghcr.io/varunkumarprajapati/void-backend:latest
+    container_name: auth_service
     environment:
       - PORT=8000
     env_file:
