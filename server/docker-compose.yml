@@ -1,0 +1,69 @@
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  gateway-shared-mesh:
+    external: true
+    name: gateway-shared-mesh
+
+services:
+  mysql:
+    image: mysql:8.4
+    networks:
+      - gateway-shared-mesh
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: valkey/valkey:8.0-alpine
+    networks:
+      - gateway-shared-mesh
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "valkey-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      target: development
+    container_name: auth_service
+    networks:
+      - gateway-shared-mesh
+    ports:
+      - ${PORT}:${PORT}
+    env_file:
+      - .env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    develop:
+      watch:
+        - path: ./
+          target: /app
+          action: sync
+          ignore:
+            - node_modules/
+
+        - path: ./package.json
+          action: rebuild

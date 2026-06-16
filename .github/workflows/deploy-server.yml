@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main # Triggers the workflow whenever you push code to the main branch
+    paths:
+      - "server/**"
 
 env:
   REGISTRY: ghcr.io
@@ -39,7 +41,7 @@ jobs:
       - name: Build and Push Production Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./server
           push: true
           target: production # <--- CRITICAL: Skips development stages for a tiny 1GB RAM footprint
           tags: ${{ steps.meta.outputs.tags }}
@@ -59,7 +61,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "docker-compose.prod.yml"
+          source: "server/docker-compose.prod.yml"
           target: "/home/ubuntu/apps/backend/"
 
       - name: Execute Deployment via SSH
