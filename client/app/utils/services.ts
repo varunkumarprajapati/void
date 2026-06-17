@@ -28,11 +28,6 @@ class AuthService {
   verifyOTP = async (payload: IVerifyOTPPayload) => {
     await client.post(ENDPOINTS.AUTH.VERIFY_OTP.URL, payload);
   };
-
-  getMe = async () => {
-    const response = await client.get(ENDPOINTS.AUTH.ME.URL);
-    return response.data;
-  };
 }
 
 const authService = new AuthService();

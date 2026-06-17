@@ -7,6 +7,7 @@ import * as yup from "yup";
 import { PasswordInput, TextInput } from "@/app/components/input";
 import { authService } from "@/app/utils/services";
 import { useState } from "react";
+import { AxiosError } from "axios";
 
 const loginSchema = yup.object({
   email: yup
@@ -23,7 +24,7 @@ type LoginFormData = yup.InferType<typeof loginSchema>;
 
 export function LoginForm() {
   const router = useRouter();
-  const [error, setError] = useState(undefined);
+  const [error, setError] = useState<string>();
   const {
     register,
     handleSubmit,
@@ -36,8 +37,12 @@ export function LoginForm() {
     try {
       await authService.login(data);
       router.push("/");
-    } catch (error) {
-      setError(error.response.data.message || "Login Failed");
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        setError(error?.response?.data?.message);
+      } else {
+        setError("Login Failed");
+      }
     }
   };
 
