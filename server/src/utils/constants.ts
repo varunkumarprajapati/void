@@ -1,7 +1,7 @@
 import path from "node:path";
 
-const SRC_DIR = path.join(process.cwd(), "src");
+const ROOT = path.join(process.cwd());
+const TEMPLATE_DIR = path.join(ROOT, "assets/templates");
+const MIGRATIONS_DIR = path.join(ROOT, "assets/migrations");
 
-const TEMPLATE_DIR = path.join(SRC_DIR, "modules/email/templates");
-
-export { SRC_DIR, TEMPLATE_DIR };
+export { ROOT, TEMPLATE_DIR, MIGRATIONS_DIR };

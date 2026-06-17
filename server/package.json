@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch ./src/index.ts",
-    "build": "npx tsc && npx tsc-alias && cp -r src/config/migrations dist/config/ && cp -r src/modules/email/templates dist/modules/email/",
+    "build": "npx tsc && npx tsc-alias",
     "start": "node ./dist/index.js",
     "migration:create": "node ./src/scripts/create-migration.js",
     "migration:run": "node ./dist/config/migrate.js",
